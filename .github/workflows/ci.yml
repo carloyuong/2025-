@@ -9,14 +9,31 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+
     steps:
       - name: 拉取代码
         uses: actions/checkout@v4
+
       - name: 设置 Python 3.12
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: 安装 pytest
-        run: pip install pytest
+
+      - name: 缓存 pip 依赖（极大加速）
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: 安装依赖
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest
+          pip install numpy
+          # 如果以后还需要其他库，在这里继续加就行，例如：
+          # pip install pandas openai requests 等
+
       - name: 运行测试
         run: pytest -v test_電子閨蜜.py
