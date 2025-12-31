@@ -1,6 +1,6 @@
-name: 電子閨蜜 CI
+name: 電子閨蜜 测试
 
-on:  # 每次 push 或 pull request 到 main 分支都触发
+on:
   push:
     branches: [ main ]
   pull_request:
@@ -8,7 +8,7 @@ on:  # 每次 push 或 pull request 到 main 分支都触发
 
 jobs:
   test:
-    runs-on: ubuntu-latest  # GitHub 免费最快 Linux 虚拟机
+    runs-on: ubuntu-latest
 
     steps:
       - name: 拉取代码
@@ -19,24 +19,8 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: 缓存 pip 依赖（极大加速！）
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-
-      - name: 安装依赖
-        run: |
-          python -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-          pip install pytest  # 安装测试框架
+      - name: 安装 pytest
+        run: pip install pytest
 
       - name: 运行测试
-        run: |
-          pytest -v  # 详细输出测试结果
-
-      # 可选：如果只想简单运行主文件而不写 pytest
-      # - name: 直接运行主程序
-      #   run: python 電子閨蜜.py
+        run: pytest -v test_電子閨蜜.py
