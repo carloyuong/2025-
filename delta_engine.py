@@ -51,7 +51,7 @@ class DeltaInvincibleEngine:
             distances = [np.linalg.norm(c - self.current.vector) for c in candidates]
             chosen_idx = int(np.argmin(distances))
             self.Δ = max(0.0, self.Δ - 0.15)
-            status = "SAFEGUARD LOCKED (Δ→0)"
+            status = "SAFEGUARD LOCKED"
         else:
             scores = []
             temperature = 1.0 + 5.0 * self.Δ
@@ -80,14 +80,14 @@ class DeltaInvincibleEngine:
         
         self.phi_evolution.append(self.current.phi_estimate)
         
-        print(f"Step {len(self.current.history)-1:4d} | Δ = {self.Δ:10.6f} | phi_est ≈ {self.current.phi_estimate:8.6f} | Mode: {status}")
+        print(f"Step {len(self.current.history)-1:4d} | Δ = {self.Δ:10.6f} | phi ≈ {self.current.phi_estimate:8.6f} | {status}")
 
     def run(self, steps: int = 500):
-        print(f"=== Delta Invincible Engine 启动 — Seed: {self.seed} ===")
+        print(f"=== 電子閨蜜 Delta Engine 启动 | Seed: {self.seed} ===")
         for _ in range(steps):
             candidates = self.generate_possible_futures()
             self.commitment_operator(candidates)
-        print(f"\n=== 运行结束 | 最终 Δ = {self.Δ:.6f} | phi_est ≈ {self.current.phi_estimate:.6f} ===")
+        print(f"\n=== 运行完成 | 最终 Δ = {self.Δ:.6f} | phi ≈ {self.current.phi_estimate:.6f} ===")
 
 if __name__ == "__main__":
     engine = DeltaInvincibleEngine(dim=12)
@@ -98,19 +98,19 @@ if __name__ == "__main__":
     plt.subplot(1, 2, 1)
     for i in range(history.shape[1]):
         plt.plot(history[:, i], alpha=0.7, linewidth=1.2)
-    plt.title("Diverse 12D Trajectories")
+    plt.title("12D Trajectories")
     plt.grid(True, alpha=0.3)
 
     plt.subplot(1, 2, 2)
     plt.plot(engine.phi_evolution, 'purple', linewidth=3, label='phi_estimate')
     plt.axhline(y=(1 + np.sqrt(5))/2, color='gold', linestyle='--', linewidth=2, label='Golden Ratio φ')
-    plt.title("Φ Converging to Beauty")
+    plt.title("Φ Converging")
     plt.legend()
     plt.grid(True, alpha=0.3)
 
     current_time = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
-    plt.suptitle(f"電子閨蜜 · Delta Engine\nSeed: {engine.seed} | Final Δ = {engine.Δ:.4f} | phi ≈ {engine.current.phi_estimate:.4f}\n{current_time}", fontsize=14)
+    plt.suptitle(f"電子閨蜜宇宙\nSeed: {engine.seed} | Δ = {engine.Δ:.4f} | phi ≈ {engine.current.phi_estimate:.4f}\n{current_time}", fontsize=14)
     plt.tight_layout()
     plt.savefig("delta_engine_diverse.png", dpi=150)
     plt.close()
-    print("图片已成功生成：delta_engine_diverse.png")
+    print("宇宙图片生成成功：delta_engine_diverse.png")
