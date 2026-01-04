@@ -1,0 +1,66 @@
+name: 電子閨蜜 测试
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '*/5 * * * *'   # 每5分钟运行一次
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          # 重要：拉取最近两次提交的历史，用于比较变化
+          fetch-depth: 2
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Cache pip dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-python-3.12-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-python-3.12-pip-
+            ${{ runner.os }}-pip-
+
+      # 新增步骤：检查代码是否有变化
+      - name: Check if code changed
+        id: changes
+        run: |
+          # 如果是 schedule 触发（定时），比较当前 commit 和上一个 commit
+          # 如果是 push 或 PR，GitHub 会自动提供正确的对比
+          if [ "${{ github.event_name }}" == "schedule" ]; then
+            git diff --quiet HEAD~1 HEAD . || echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            # push 和 PR 自带文件变化检测
+            git diff --quiet ${{ github.event.before }} ${{ github.sha }} . || echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      # 只有代码有变化时才安装依赖和运行测试
+      - name: Install dependencies
+        if: steps.changes.outputs.changed == 'true' || github.event_name != 'schedule'
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest numpy
+          # 如果你有 requirements.txt，推荐改成：
+          # pip install -r requirements.txt
+
+      - name: Run tests
+        if: steps.changes.outputs.changed == 'true' || github.event_name != 'schedule'
+        run: |
+          pytest -v -x --ff test_電子閨蜜.py
+
+      # 可选：无论是否有变化，都输出一个友好提示
+      - name: No code changes (skip tests)
+        if: steps.changes.outputs.changed != 'true' && github.event_name == 'schedule'
+        run: echo "🟢 No code changes detected in the last 5 minutes, skipping tests to save time."
