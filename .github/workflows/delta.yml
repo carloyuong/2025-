@@ -1,0 +1,22 @@
+name: 電子閨蜜 · 宇宙生成
+
+on:
+  push:
+    branches: [ main ]
+  schedule:
+    - cron: '*/5 * * * *'
+
+jobs:
+  generate-universe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install numpy matplotlib
+      - run: python delta_engine.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: 電子閨蜜宇宙
+          path: delta_engine_diverse.png
