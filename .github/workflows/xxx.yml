@@ -1,4 +1,4 @@
-name: 電子閨蜜 测试
+name: 電子閨蜜 · 多样宇宙生成器
 
 on:
   push:
@@ -20,15 +20,6 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-
-      - name: Cache pip dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-python-3.12-pip-${{ hashFiles('requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-python-3.12-pip-
-            ${{ runner.os }}-pip-
 
       - name: Install dependencies
         run: |
@@ -114,4 +105,28 @@ jobs:
                   self.current.vector = chosen.copy()
                   self.current.history.append(chosen.copy())
                   
-                  target_phi = (1 + np.sqrt(5)) / ​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​
+                  target_phi = (1 + np.sqrt(5)) / 2
+                  chosen_norm = np.linalg.norm(chosen)
+                  self.current.phi_estimate += 0.01 * (target_phi - chosen_norm)
+                  
+                  self.phi_evolution.append(self.current.phi_estimate)
+                  
+                  print(f"Step {len(self.current.history)-1:4d} | Δ = {self.Δ:10.6f} | phi_est ≈ {self.current.phi_estimate:8.6f} | Mode: {status}")
+
+              def run(self, steps: int = 500):
+                  print(f"=== Delta Invincible Engine 启动 — Seed: {self.seed} ===\n")
+                  for _ in range(steps):
+                      candidates = self.generate_possible_futures()
+                      self.commitment_operator(candidates)
+                  print(f"\n=== 运行结束 | 最终 Δ = {self.Δ:.6f} | phi_est ≈ {self.current.phi_estimate:.6f} ===")
+
+          if __name__ == "__main__":
+              engine = DeltaInvincibleEngine(dim=12)
+              engine.run(steps=500)
+              
+              history = np.array(engine.current.history)
+              plt.figure(figsize=(15, 8))
+              plt.subplot(1, 2, 1)
+              for i in range(history.shape[1]):
+                  plt.plot(history[:, i], alpha=0.7, linewidth=1.2)
+              plt.title("Diverse 12​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​
