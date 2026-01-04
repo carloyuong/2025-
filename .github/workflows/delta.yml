@@ -1,4 +1,4 @@
-name: 電子閨蜜 · 宇宙生成
+name: 電子閨蜜宇宙生成
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     - cron: '*/5 * * * *'
 
 jobs:
-  generate-universe:
+  generate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,5 +18,5 @@ jobs:
       - run: python delta_engine.py
       - uses: actions/upload-artifact@v4
         with:
-          name: 電子閨蜜宇宙
+          name: universe
           path: delta_engine_diverse.png
