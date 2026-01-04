@@ -76,7 +76,7 @@ class DeltaInvincibleEngine:
         
         target_phi = (1 + np.sqrt(5)) / 2
         chosen_norm = np.linalg.norm(chosen)
-        self.current.phi_estimate += 0.01 * (target_phi - chosen_norm)
+        self.current.phi_estimate = 0.99 * self.current.phi_estimate + 0.01 * chosen_norm
         
         self.phi_evolution.append(self.current.phi_estimate)
         
