@@ -38,8 +38,8 @@ class DeltaInvincibleEngine:
         base = self.current.vector.copy()
         
         for _ in range(n_branches):
-            noise = np.random.randn(len(base)) * 0.15
-            exploration_magnitude = np.exp(3.0 * self.Δ) if not self.safeguard_active else 0.0
+            noise = np.random.randn(len(base)) * 0.1
+            exploration_magnitude = np.exp(min(5.0, 1.0 * self.Δ)) if not self.safeguard_active else 0.0
             exploration = exploration_magnitude * np.random.randn(len(base))
             candidate = base + noise + exploration
             candidate /= np.linalg.norm(candidate) + 1e-12
@@ -82,7 +82,7 @@ class DeltaInvincibleEngine:
         
         print(f"Step {len(self.current.history)-1:4d} | Δ = {self.Δ:10.6f} | phi ≈ {self.current.phi_estimate:8.6f} | {status}")
 
-    def run(self, steps: int = 500):
+    def run(self, steps: int = 200):
         print(f"=== 電子閨蜜 Delta Engine 启动 | Seed: {self.seed} ===")
         for _ in range(steps):
             candidates = self.generate_possible_futures()
