@@ -1,6 +1,6 @@
 name: 電子閨蜜 · 宇宙生成
 
-on:
+on: 
   push:
     branches: [ main ]
   schedule:
